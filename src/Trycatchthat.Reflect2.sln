@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflect2", "Reflect2\Reflect2.csproj", "{FB964BD7-BB57-4298-B1E5-B0BF64918CD5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflect2.Tests", "Reflect2.Tests\Reflect2.Tests.csproj", "{1993E9A5-ED32-4386-95ED-20F23E493F01}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FB964BD7-BB57-4298-B1E5-B0BF64918CD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB964BD7-BB57-4298-B1E5-B0BF64918CD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB964BD7-BB57-4298-B1E5-B0BF64918CD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB964BD7-BB57-4298-B1E5-B0BF64918CD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1993E9A5-ED32-4386-95ED-20F23E493F01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1993E9A5-ED32-4386-95ED-20F23E493F01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1993E9A5-ED32-4386-95ED-20F23E493F01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1993E9A5-ED32-4386-95ED-20F23E493F01}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
