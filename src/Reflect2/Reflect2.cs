@@ -39,24 +39,15 @@ namespace Trycatchthat
         }
 
         static Dictionary<MethodLookupInfo, Delegate> lookup = new Dictionary<MethodLookupInfo, Delegate>(new MethodLookupInfo.Comparer());
-        public static TReturn Run<TSource, TReturn>(string methodName, TSource instance = default(TSource), params object[] args)
+        public static TReturn Run<TSource, TReturn>(string methodName, TSource instance = default(TSource), object[] args = null)
         {
             var sourceType = typeof(TSource);
-            var returnType = typeof(TReturn);
 
             var key = MethodLookupInfo.Make(methodName, sourceType, args);
             Delegate caller;
 
             if (lookup.TryGetValue(key, out caller))
                 return Run<TReturn>(caller, args);
-
-            // create an expression (arg0,arg1,arg2...)=>instance.Method((int)arg0,(int)arg1,(int)arg2..);
-            var paramExpressionsDecl = args.Select(a => Expression.Parameter(typeof(object))).ToArray();
-            Expression[] paramExpressionsBody = new Expression[args.Length];
-            for (int i = 0; i < args.Length; i++)
-            {
-                paramExpressionsBody[i] = Expression.Convert(paramExpressionsDecl[i], args[i].GetType());
-            }
 
             var methodInfo = typeof(TSource)
                                     .GetMethod(methodName,
@@ -65,8 +56,15 @@ namespace Trycatchthat
                                                 | System.Reflection.BindingFlags.NonPublic,
                                                 null,
                                                 args == null ? null : args.Select(a => a.GetType()).ToArray(),
-                                                null);                                                
-
+                                                null);
+            var methodParams = methodInfo.GetParameters();
+            // create an expression (arg0,arg1,arg2...)=>instance.Method((int)arg0,(int)arg1,(int)arg2..);
+            var paramExpressionsDecl = args.Select(a => Expression.Parameter(typeof(object))).ToArray();
+            Expression[] paramExpressionsBody = new Expression[args.Length];
+            for (int i = 0; i < args.Length; i++)
+            {
+                paramExpressionsBody[i] = Expression.Convert(paramExpressionsDecl[i], methodParams[i].ParameterType);
+            }
             var bodyExpr = Expression.Call(Expression.Constant(instance), methodInfo, paramExpressionsBody);
             var lambdaExpr = Expression.Lambda(bodyExpr, paramExpressionsDecl);
             caller = lambdaExpr.Compile();
@@ -76,7 +74,7 @@ namespace Trycatchthat
             
         }
 
-        private static TReturn Run<TReturn>(Delegate caller, params object[] args)
+        private static TReturn Run<TReturn>(Delegate caller, object[] args)
         {
             var f2 = caller as Func<object, object, TReturn>;
             if (f2 != null)

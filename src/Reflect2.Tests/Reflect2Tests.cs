@@ -9,6 +9,7 @@ using Trycatchthat;
 using System.Linq.Expressions;
 using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Attributes;
+using System.Diagnostics;
 
 namespace Trycatchthat.Tests
 {
@@ -17,6 +18,7 @@ namespace Trycatchthat.Tests
     {
         // instance methods
         public int Add(int a, int b) => a + b;
+        public int AddObjects(object a, object b) => (int)a + (int)b;
         public int Subract(int a, int b) => a * b;
         
         //static methods
@@ -35,7 +37,23 @@ namespace Trycatchthat.Tests
 
         public static void Main()
         {
-            BenchmarkRunner.Run<Reflect2Tests>();
+            //BenchmarkRunner.Run<Reflect2Tests>();
+            var b = new Reflect2Tests();
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            for (int i = 0; i < 1000000; i++)
+            {
+                b.TestInstanceMethod();
+            }
+            var t1 = sw.ElapsedMilliseconds;
+            sw.Restart();
+            for (int i = 0; i < 1000000; i++)
+            {
+                b.TestInstanceMethodReflection();
+            }
+            var t2 = sw.ElapsedMilliseconds;
+
+            Console.WriteLine($"t1:{t1}; t2:{t2}");
         }
 
         [Test]
@@ -77,8 +95,9 @@ namespace Trycatchthat.Tests
         public void TestInstanceMethod()
         {
             var sut = new Arithematic();
-            var r = Reflect2.Run<Arithematic,int>("Add", sut, 1, 2);
-            //var r2 = Reflect2.Run<Arithematic,int>("Add", sut, 1, 2);
+            //var r = Reflect2.Run<Arithematic,int>("AddObjects", sut, (object)1, (object)2);
+            var r2 = Reflect2.Run<Arithematic,int>("Add", sut, new object[] { 1, 2 });
+            //r2 = Reflect2.Run<Arithematic,int>("Add", sut, 1, 2);
         }
 
         [Test]
@@ -86,8 +105,20 @@ namespace Trycatchthat.Tests
         public void TestInstanceMethodReflection()
         {
             var sut = new Arithematic();
-            typeof(Arithematic).GetMethod("Add").Invoke(sut, new object[] { 1, 2 });
-            //typeof(Arithematic).GetMethod("Add").Invoke(sut, new object[] { 1, 2 });
+            //typeof(Arithematic).GetMethod("AddObjects").Invoke(sut, new object[] { 1, 2 });
+            var r = typeof(Arithematic).GetMethod("Add").Invoke(sut, new object[] { 1, 2 });
+            //var args = new object[] { 1, 2 };
+            //var methodInfo = typeof(Arithematic)
+            //            .GetMethod("Add",
+            //                        System.Reflection.BindingFlags.Instance
+            //                        | System.Reflection.BindingFlags.Public
+            //                        | System.Reflection.BindingFlags.NonPublic,
+            //                        null,
+            //                        args == null ? null : args.Select(a => a.GetType()).ToArray(),
+            //                        null);
+            //var r = methodInfo.Invoke(sut, args);
+            //r = methodInfo.Invoke(sut, args);
+            //Assert.That(r, Is.EqualTo(3));
         }
 
         [Test]
