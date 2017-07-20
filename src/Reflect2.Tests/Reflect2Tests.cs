@@ -43,18 +43,29 @@ namespace Trycatchthat.Tests
             sw.Start();
             for (int i = 0; i < 1000000; i++)
             {
-                b.TestInstanceMethod();
-            }
-            var t1 = sw.ElapsedMilliseconds;
-            sw.Restart();
-            for (int i = 0; i < 1000000; i++)
-            {
                 b.TestInstanceMethodReflection();
             }
             var t2 = sw.ElapsedMilliseconds;
 
-            Console.WriteLine($"t1:{t1}; t2:{t2}");
+            sw.Restart();
+            for (int i = 0; i < 1000000; i++)
+            {
+                b.TestInstanceMethod();
+            }
+            var t1 = sw.ElapsedMilliseconds;
+
+            sw.Restart();
+            for (int i = 0; i < 1000000; i++)
+            {
+                b.TestInstanceMethodTyped();
+            }
+            var t3 = sw.ElapsedMilliseconds;
+
+            Console.WriteLine($"t1:{t1}; t2:{t2}; t3:{t3}");
+            Console.WriteLine("done");
+            Console.Read();
         }
+
 
         [Test]
         public void TestExpression()
@@ -90,6 +101,7 @@ namespace Trycatchthat.Tests
         }
 
 
+
         [Test]
         [Benchmark]
         public void TestInstanceMethod()
@@ -98,6 +110,17 @@ namespace Trycatchthat.Tests
             //var r = Reflect2.Run<Arithematic,int>("AddObjects", sut, (object)1, (object)2);
             var r2 = Reflect2.Run<Arithematic,int>("Add", sut, new object[] { 1, 2 });
             //r2 = Reflect2.Run<Arithematic,int>("Add", sut, 1, 2);
+        }
+
+
+
+        [Test]
+        [Benchmark]
+        public void TestInstanceMethodTyped()
+        {
+            var sut = new Arithematic();
+            //var r = Reflect2.Run<Arithematic,int>("AddObjects", sut, (object)1, (object)2);
+            var r2 = Reflect2.Run<Arithematic, int,int,int>("Add", sut, 1,2);
         }
 
         [Test]
